@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-// scenery setup
+// scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x222222);
 
@@ -49,7 +49,7 @@ scene.add(player);
 const loader = new GLTFLoader();
 
 loader.load(
-  "./models/forest_lighting_wip.glb",
+  "./models/forest.glb",
   function (gltf) {
     const forest = gltf.scene;
 
@@ -58,7 +58,6 @@ loader.load(
 
     scene.add(forest);
 
-    // get center of model so camera rotates around it
     const box = new THREE.Box3().setFromObject(forest);
     const center = box.getCenter(new THREE.Vector3());
 
@@ -69,7 +68,7 @@ loader.load(
   },
   undefined,
   function (error) {
-    console.log("error loading model:", error); // to help with debugging if the model doesn't load
+    console.log("error loading model:", error);
   },
 );
 
