@@ -2,9 +2,17 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+<<<<<<< Updated upstream
 // scenery setup
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x222222);
+=======
+//library ref
+import * as THREE from 'three';
+/** Modules */
+//scene
+let scene = new THREE.Scene();
+>>>>>>> Stashed changes
 
 // camera
 const camera = new THREE.PerspectiveCamera(
