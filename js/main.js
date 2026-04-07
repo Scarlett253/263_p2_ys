@@ -29,3 +29,35 @@ let playerMat = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x00
 let player = new THREE.Mesh(playerGeo, playerMat);
 player.position.set(0, 1, 0);
 scene.add(player);
+
+// load forest
+let loader = new GLTFLoader();
+
+loader.load('models/forest.glb', function (gltf) {
+    let forest = gltf.scene;
+    forest.scale.set(2, 2, 2);
+    scene.add(forest);
+});
+
+//controls
+let keys = {};
+
+document.addEventListener("keydown", function (e) {
+    keys[e.key.toLowerCase()] = true;
+});
+
+document.addEventListener("keyup", function (e) {
+    keys[e.key.toLowerCase()] = false;
+});
+
+//movement
+function movePlayer() {
+    let speed = 0.1;
+
+    if (keys["w"]) player.position.z -= speed;
+    if (keys["s"]) player.position.z += speed;
+    if (keys["a"]) player.position.x -= speed;
+    if (keys["d"]) player.position.x += speed;
+}
+
+//camera follow 
