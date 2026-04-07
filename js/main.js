@@ -5,7 +5,10 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 // scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x222222);
+
+//fog
 const sceneFogColor = new THREE.Color(0x222222);
+scene.fog = new THREE.Fog(sceneFogColor, 20, 120);
 
 // camera
 const camera = new THREE.PerspectiveCamera(
@@ -46,6 +49,20 @@ const player = new THREE.Mesh(playerGeometry, playerMaterial);
 player.position.set(0, 1, 0);
 scene.add(player);
 
+//keys
+const keys = {};
+
+document.addEventListener("keydown", function (e) {
+  keys[e.key.toLowerCase()] = true;
+});
+
+document.addEventListener("keyup", function (e) {
+  keys[e.key.toLowerCase()] = false;
+});
+
+//player mouvement
+function movePlayer() { }
+
 // load forest model
 const loader = new GLTFLoader();
 
@@ -73,12 +90,21 @@ loader.load(
   },
 );
 
+function updateCamera() {
+  camera.position.x = player.position.x;
+  camera.position.y = player.position.y + 10;
+  camera.position.z = player.position.z + 20;
+
+  camera.lookAt(player.position);
+}
 // animation loop
 function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
   renderer.render(scene, camera);
+
+  updateCamera();
 }
 
 animate();
