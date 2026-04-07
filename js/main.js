@@ -5,13 +5,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 // scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x222222);
-=======
-//library ref
-import * as THREE from 'three';
-/** Modules */
-//scene
-let scene = new THREE.Scene();
->>>>>>> Stashed changes
+const sceneFogColor = new THREE.Color(0x222222);
 
 // camera
 const camera = new THREE.PerspectiveCamera(
