@@ -1,31 +1,91 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158/build/three.module.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.158/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-/** Modules */
-//scene
-let scene = new THREE.Scene();
+// scenery setup
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x222222);
 
-//camera
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 5, 10);
+// camera
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000,
+);
+camera.position.set(0, 30, 60);
 
-//renderer
-let renderer = new THREE.WebGLRenderer();
+// renderer
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-//fog
-scene.fog = new THREE.Fog(0x000000, 5, 40);
+// mouse controls for testing the map
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.target.set(0, 0, 0);
 
-//light
-let light = new THREE.PointLight(0x00ffff, 2);
-light.position.set(0, 10, 0);
-scene.add(light);
+// lights
+const pointLight = new THREE.PointLight(0xffffff, 5);
+pointLight.position.set(0, 20, 10);
+scene.add(pointLight);
 
-//player
-let playerGeo = new THREE.SphereGeometry(0.5);
-let playerMat = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x00ffff });
+const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+scene.add(ambientLight);
 
-let player = new THREE.Mesh(playerGeo, playerMat);
+// temporary player
+const playerGeometry = new THREE.SphereGeometry(0.5);
+const playerMaterial = new THREE.MeshStandardMaterial({
+  color: 0x00ffff,
+  emissive: 0x00ffff,
+});
+
+const player = new THREE.Mesh(playerGeometry, playerMaterial);
 player.position.set(0, 1, 0);
 scene.add(player);
+
+// load forest model
+const loader = new GLTFLoader();
+
+loader.load(
+  "./models/forest_lighting_wip.glb",
+  function (gltf) {
+    const forest = gltf.scene;
+
+    forest.scale.set(0.5, 0.5, 0.5);
+    forest.position.set(0, 0, 0);
+
+    scene.add(forest);
+
+    // get center of model so camera rotates around it
+    const box = new THREE.Box3().setFromObject(forest);
+    const center = box.getCenter(new THREE.Vector3());
+
+    controls.target.copy(center);
+    camera.lookAt(center);
+
+    console.log("model loaded");
+  },
+  undefined,
+  function (error) {
+    console.log("error loading model:", error); // to help with debugging if the model doesn't load
+  },
+);
+
+// animation loop
+function animate() {
+  requestAnimationFrame(animate);
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// keep canvas size correct if window changes
+window.addEventListener("resize", function () {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
