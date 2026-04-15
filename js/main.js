@@ -11,6 +11,7 @@ const sceneFogColor = new THREE.Color(0x222222);
 scene.fog = new THREE.Fog(sceneFogColor, 20, 120);
 
 // camera
+const useFollowCamera = false; //turn on "true" to block the camera
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -145,8 +146,12 @@ function animate() {
 
   controls.update();
 
-  updateCamera();
   movePlayer();
+
+  if (useFollowCamera) {
+    updateCamera();
+  }
+
   checkDistance();
 
   renderer.render(scene, camera);
