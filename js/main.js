@@ -1,11 +1,23 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { startTeleport, checkDistance, startTimer } from "./game.js";
+import { createHiddenPlayer, hiddenPlayer } from "./player.js";
+import { startTimer, checkDistance, startTeleport } from "./game.js";
 
 // scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x222222);
+
+createHiddenPlayer(scene);
+hiddenPlayer.material.emissiveIntensity = 0;
+
+startTeleport(hiddenPlayer);
+
+//timer
+const timerText = document.getElementById("timer");
+startTimer(timerText);
+
+const mapLimit = 5;
 
 //fog
 const sceneFogColor = new THREE.Color(0x222222);
@@ -50,18 +62,6 @@ const playerMaterial = new THREE.MeshStandardMaterial({
 const player = new THREE.Mesh(playerGeometry, playerMaterial);
 player.position.set(0, 1, 0);
 scene.add(player);
-
-//hidden player
-const hiddenGeometry = new THREE.SphereGeometry(0.5);
-const hiddenMaterial = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  transparent: true,
-  opacity: 0.05,
-});
-
-const hiddenPlayer = new THREE.Mesh(hiddenGeometry, hiddenMaterial);
-hiddenPlayer.position.set(10, 1, 10);
-scene.add(hiddenPlayer);
 
 //keys
 const keys = {};
@@ -134,7 +134,6 @@ function animate() {
     updateCamera();
   }
 
-  checkDistance();
   checkDistance(player, hiddenPlayer);
 
   renderer.render(scene, camera);

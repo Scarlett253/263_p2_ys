@@ -1,25 +1,25 @@
-const mapLimit = 20;
+const mapLimit = 5;
 
 //timer setup
-const timeLeft = 60;
-const gameOver = false;
+let timeLeft = 60;
+let gameOver = false;
 
 //teleport hidden player
-function teleportHidden(hiddenPlayer) {
+export function teleportHidden(hiddenPlayer) {
     hiddenPlayer.position.set(
         Math.random() * mapLimit * 2 - mapLimit,
         1,
         Math.random() * mapLimit * 2 - mapLimit
     );
 }
-function startTeleport(hiddenPlayer) {
+export function startTeleport(hiddenPlayer) {
     setInterval(() => {
         teleportHidden(hiddenPlayer);
     }, 3000);
 }
 
 //Distance between players
-function checkDistance(player, hiddenPlayer) {
+export function checkDistance(player, hiddenPlayer) {
     const distance = player.position.distanceTo(hiddenPlayer.position);
 
     if (distance < 20) {
@@ -35,12 +35,12 @@ function checkDistance(player, hiddenPlayer) {
 }
 
 //Timer
-function startTimer() {
+export function startTimer(timerText) {
     const timerInterval = setInterval(() => {
         if (gameOver) return;
 
         timeLeft--;
-        console.log("Time:", timeLeft);
+        timerText.textContent = "Time: " + timeLeft;
 
         if (timeLeft <= 0) {
             loseGame();
@@ -52,10 +52,10 @@ function startTimer() {
 //Win or Lose
 function winGame() {
     gameOver = true;
-    console.log("You Can See Me Now");
+    document.getElementById("message").textContent = "You Can See Me Now";
 }
 
 function loseGame() {
     gameOver = true;
-    console.log("You Never Found Me");
+    document.getElementById("message").textContent = "You Never Found Me";
 }
