@@ -38,7 +38,7 @@ scene.add(pointLight);
 const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 scene.add(ambientLight);
 
-// temporary player
+//player1
 const playerGeometry = new THREE.SphereGeometry(0.5);
 const playerMaterial = new THREE.MeshStandardMaterial({
   color: 0x00ffff,
@@ -48,6 +48,39 @@ const playerMaterial = new THREE.MeshStandardMaterial({
 const player = new THREE.Mesh(playerGeometry, playerMaterial);
 player.position.set(0, 1, 0);
 scene.add(player);
+
+//hidden player
+const hiddenGeometry = new THREE.SphereGeometry(0.5);
+const hiddenMaterial = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  transparent: true,
+  opacity: 0.05,
+});
+
+const hiddenPlayer = new THREE.Mesh(hiddenGeometry, hiddenMaterial);
+hiddenPlayer.position.set(10, 1, 10);
+scene.add(hiddenPlayer);
+
+//teleport hidden player to random positions
+function teleportHidden() {
+  hiddenPlayer.position.set(
+    Math.random() * 40 - 20,
+    1,
+    Math.random() * 40 - 20,
+  );
+}
+setInterval(teleportHidden, 3000);
+
+//Distance between players
+function checkDistance() {
+  const distance = player.position.distanceTo(hiddenPlayer.position);
+
+  if (distance < 20) {
+    hiddenPlayer.material.opacity = 1 - distance / 20;
+  } else {
+    hiddenPlayer.material.opacity = 0.05;
+  }
+}
 
 //keys
 const keys = {};
@@ -61,7 +94,16 @@ document.addEventListener("keyup", function (e) {
 });
 
 //player mouvement
-function movePlayer() { }
+function movePlayer() {
+  const speed = 0.3;
+
+  if (keys["w"]) player.position.z -= speed;
+  if (keys["s"]) player.position.z += speed;
+  if (keys["a"]) player.position.x -= speed;
+  if (keys["d"]) player.position.x += speed;
+
+  player.position.y = 1;
+}
 
 // load forest model
 const loader = new GLTFLoader();
@@ -102,9 +144,12 @@ function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
-  renderer.render(scene, camera);
 
   updateCamera();
+  movePlayer();
+  checkDistance();
+
+  renderer.render(scene, camera);
 }
 
 animate();
