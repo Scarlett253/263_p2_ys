@@ -31,7 +31,8 @@ const mapLimit = 5;
 
 // fog
 const sceneFogColor = new THREE.Color(0x222222);
-scene.fog = new THREE.Fog(sceneFogColor, 20, 120);
+scene.fog = new THREE.Fog(sceneFogColor, 2, 15);
+
 
 // camera
 const useFollowCamera = false; // turn on "true" to block the camera
@@ -64,8 +65,8 @@ controls.dampingFactor = 0.05;
 controls.target.set(0, 0, 0);
 
 // lights
-const pointLight = new THREE.PointLight(0xffffff, 5);
-pointLight.position.set(0, 20, 10);
+const pointLight = new THREE.PointLight(0xffffff, 3, 30);
+pointLight.position.set(0, 10, 0);
 scene.add(pointLight);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 2);
