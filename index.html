@@ -1,63 +1,61 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project 2</title>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        background: black;
-      }
 
-      #bg-video {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 0;
-        opacity: 0.25;
-        filter: brightness(0.35) contrast(1.2) saturate(1.4) sepia(0.7)
-          hue-rotate(-25deg) blur(2px);
-        pointer-events: none;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project 2</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
 
-      canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1;
-        display: block;
-      }
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.25;
+      filter: brightness(0.35) contrast(1.2) saturate(1.4) sepia(0.7) hue-rotate(-25deg) blur(2px);
+      pointer-events: none;
+    }
 
-      #ui {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 2;
-        color: white;
-        padding: 16px;
-      }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      display: block;
+    }
 
-      #bg-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        background: radial-gradient(
-          circle at center,
+    #ui {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      color: white;
+      padding: 16px;
+    }
+
+    #bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center,
           rgba(255, 80, 20, 0.18),
           rgba(60, 0, 0, 0.25),
-          rgba(0, 0, 0, 0.72)
-        );
-        mix-blend-mode: screen;
-      }
-    </style>
-    <!-- import map to load three.js and its addons from a CDN -->
-    <script type="importmap">
+          rgba(0, 0, 0, 0.72));
+      mix-blend-mode: screen;
+    }
+  </style>
+  <!-- import map to load three.js and its addons from a CDN -->
+  <script type="importmap">
       {
         "imports": {
           "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
@@ -65,20 +63,21 @@
         }
       }
     </script>
-  </head>
+</head>
 
-  <body>
-    <div id="ui">
-      <p id="timer">Time: 60</p>
-      <p id="message"></p>
-    </div>
+<body>
+  <div id="ui">
+    <p id="timer">Time: 60</p>
+    <p id="message"></p>
+  </div>
 
-    <video id="bg-video" autoplay muted loop playsinline>
-      <source src="assets/MistForest.mp4" type="video/mp4" />
-    </video>
+  <video id="bg-video" autoplay muted loop playsinline>
+    <source src="assets/MistForest.mp4" type="video/mp4" />
+  </video>
 
-    <div id="bg-overlay"></div>
+  <div id="bg-overlay"></div>
 
-    <script type="module" src="./js/main.js"></script>
-  </body>
+  <script type="module" src="./js/main.js"></script>
+</body>
+
 </html>

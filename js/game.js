@@ -22,7 +22,7 @@ export function startTeleport(hiddenPlayer) {
 export function checkDistance(player, hiddenPlayer) {
     const distance = player.position.distanceTo(hiddenPlayer.position);
 
-    if (distance < 20) {
+    if (distance < 3) {
         hiddenPlayer.material.opacity = 1 - distance / 20;
         hiddenPlayer.material.emissiveIntensity = 2 * (1 - distance / 20);
     } else {
