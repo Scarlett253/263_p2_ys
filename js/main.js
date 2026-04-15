@@ -95,7 +95,7 @@ document.addEventListener("keyup", function (e) {
 
 // player movement
 function movePlayer() {
-  const speed = 0.3;
+  const speed = 0.1;
 
   if (keys["w"]) player.position.z -= speed;
   if (keys["s"]) player.position.z += speed;
