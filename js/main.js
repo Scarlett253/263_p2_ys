@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { startTeleport, checkDistance, startTimer } from "./game.js";
 
 // scene
 const scene = new THREE.Scene();
@@ -62,27 +63,6 @@ const hiddenPlayer = new THREE.Mesh(hiddenGeometry, hiddenMaterial);
 hiddenPlayer.position.set(10, 1, 10);
 scene.add(hiddenPlayer);
 
-//teleport hidden player to random positions
-function teleportHidden() {
-  hiddenPlayer.position.set(
-    Math.random() * 40 - 20,
-    1,
-    Math.random() * 40 - 20,
-  );
-}
-setInterval(teleportHidden, 3000);
-
-//Distance between players
-function checkDistance() {
-  const distance = player.position.distanceTo(hiddenPlayer.position);
-
-  if (distance < 20) {
-    hiddenPlayer.material.opacity = 1 - distance / 20;
-  } else {
-    hiddenPlayer.material.opacity = 0.05;
-  }
-}
-
 //keys
 const keys = {};
 
@@ -104,6 +84,8 @@ function movePlayer() {
   if (keys["d"]) player.position.x += speed;
 
   player.position.y = 1;
+  player.position.x = Math.max(-mapLimit, Math.min(mapLimit, player.position.x));
+  player.position.z = Math.max(-mapLimit, Math.min(mapLimit, player.position.z));
 }
 
 // load forest model
@@ -153,6 +135,7 @@ function animate() {
   }
 
   checkDistance();
+  checkDistance(player, hiddenPlayer);
 
   renderer.render(scene, camera);
 }
@@ -165,3 +148,5 @@ window.addEventListener("resize", function () {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+
