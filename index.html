@@ -7,7 +7,6 @@
 
     <link rel="stylesheet" href="./css/style.css" />
 
-    <!-- Three.js import -->
     <script type="importmap">
       {
         "imports": {
@@ -21,19 +20,30 @@
   <body>
     <!-- START SCREEN -->
     <div id="startScreen">
+      <video id="startVideo" autoplay muted loop playsinline>
+        <source src="assets/StartingScreen.mp4" type="video/mp4" />
+      </video>
+
       <h1>Can You See Me?</h1>
       <p>Move with WASD</p>
       <p>Find the hidden presence before time runs out</p>
       <button id="startBtn">Start</button>
     </div>
 
+    <!-- END SCREEN -->
+    <div id="endScreen">
+      <div id="endBox">
+        <p id="message"></p>
+        <button id="restartBtn">Restart</button>
+      </div>
+    </div>
+
     <!-- GAME UI -->
     <div id="ui">
       <p id="timer">Time: 60</p>
-      <p id="message"></p>
     </div>
 
-    <!-- BACKGROUND VIDEO -->
+    <!-- GAME BACKGROUND VIDEO -->
     <video id="bg-video" autoplay muted loop playsinline>
       <source src="assets/MistForest.mp4" type="video/mp4" />
     </video>

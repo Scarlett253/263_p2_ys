@@ -2,9 +2,14 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { createHiddenPlayer, hiddenPlayer } from "./player.js";
-import { startTimer, checkDistance, startTeleport } from "./game.js";
+import {
+  startTimer,
+  checkDistance,
+  startTeleport,
+  isGameOver,
+} from "./game.js";
 
-// GAME STATE
+// game state
 let gameStarted = false;
 
 // scene
@@ -27,7 +32,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// mouse camera controls
+// camera controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -35,15 +40,13 @@ controls.enablePan = true;
 controls.enableZoom = true;
 controls.target.set(0, 1, 0);
 
-// fog
-scene.fog = new THREE.Fog(0x222222, 2, 15);
+// fog (simple, not too aggressive)
+scene.fog = new THREE.Fog(0x120603, 10, 30);
 
-// lights
-const light = new THREE.PointLight(0xffffff, 3, 30);
-light.position.set(0, 10, 0);
-scene.add(light);
-
-scene.add(new THREE.AmbientLight(0xffffff, 2));
+// 🔥 ONLY LIGHT (keep it simple)
+const fireLight = new THREE.PointLight(0xff5a1f, 6, 25);
+fireLight.position.set(0, 1, 0);
+scene.add(fireLight);
 
 // visible player
 const player = new THREE.Mesh(
@@ -56,7 +59,7 @@ scene.add(player);
 // hidden player
 createHiddenPlayer(scene);
 
-// keyboard controls
+// keyboard input
 const keys = {};
 document.addEventListener("keydown", (e) => {
   keys[e.key.toLowerCase()] = true;
@@ -68,6 +71,7 @@ document.addEventListener("keyup", (e) => {
 // movement
 function movePlayer() {
   if (!gameStarted) return;
+  if (isGameOver()) return;
 
   const speed = 0.1;
   const mapLimit = 5;
@@ -89,27 +93,36 @@ function movePlayer() {
   );
 }
 
-// START BUTTON
+// UI
 const startBtn = document.getElementById("startBtn");
 const startScreen = document.getElementById("startScreen");
 const timerText = document.getElementById("timer");
+const restartBtn = document.getElementById("restartBtn");
 
+// start game
 startBtn.addEventListener("click", () => {
   startScreen.style.display = "none";
   gameStarted = true;
 
   startTimer(timerText);
-  startTeleport(hiddenPlayer);
+  startTeleport(hiddenPlayer, player);
 });
 
-// forest model
+// restart
+restartBtn.addEventListener("click", () => {
+  location.reload();
+});
+
+// load model
 const loader = new GLTFLoader();
 loader.load(
   "./models/forest.glb",
   (gltf) => {
     const forest = gltf.scene;
+
     forest.scale.set(0.5, 0.5, 0.5);
     forest.position.set(0, 0, 0);
+
     scene.add(forest);
   },
   undefined,
@@ -118,14 +131,14 @@ loader.load(
   },
 );
 
-// animation loop
+// loop
 function animate() {
   requestAnimationFrame(animate);
 
   movePlayer();
   controls.update();
 
-  if (gameStarted) {
+  if (gameStarted && !isGameOver()) {
     checkDistance(player, hiddenPlayer);
   }
 

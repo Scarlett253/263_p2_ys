@@ -5,7 +5,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* background video */
+/* gameplay background video */
 #bg-video {
   position: fixed;
   top: 0;
@@ -14,21 +14,21 @@ body {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-
   opacity: 0.25;
   filter: brightness(0.4) contrast(1.2) saturate(1.5) sepia(0.6)
     hue-rotate(-20deg) blur(2px);
 }
 
-/* THREE canvas */
+/* three.js canvas */
 canvas {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1;
+  display: block;
 }
 
-/* UI (timer + message) */
+/* top left timer */
 #ui {
   position: fixed;
   top: 0;
@@ -38,38 +38,99 @@ canvas {
   padding: 16px;
 }
 
+#timer {
+  margin: 0;
+  font-size: 24px;
+}
+
 /* START SCREEN */
 #startScreen {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
   z-index: 3;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: white;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* start screen video */
+#startVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* dark layer on top of start video */
+#startScreen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+/* start screen content above video */
+#startScreen h1,
+#startScreen p,
+#startScreen button {
+  position: relative;
+  z-index: 2;
 }
 
 #startScreen h1 {
-  font-size: 40px;
-  margin-bottom: 10px;
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+#startScreen p {
+  margin: 6px 0;
+  font-size: 20px;
 }
 
 #startBtn {
   margin-top: 20px;
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 18px;
   cursor: pointer;
+  border: none;
+  border-radius: 6px;
 }
 
-/* END MESSAGE */
-#message {
+/* END SCREEN */
+#endScreen {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 32px;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 4;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#endBox {
+  background: rgba(20, 20, 20, 0.9);
+  padding: 30px 40px;
+  border-radius: 10px;
   text-align: center;
+  color: white;
+}
+
+#message {
+  font-size: 30px;
+  margin: 0 0 20px 0;
+}
+
+#restartBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
 }

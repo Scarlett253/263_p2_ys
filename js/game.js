@@ -1,23 +1,39 @@
 let timeLeft = 60;
 let gameOver = false;
-let teleportInterval;
+let teleportInterval = null;
+let timerInterval = null;
+
+// lets main.js ask if game is over
+export function isGameOver() {
+  return gameOver;
+}
 
 // start teleport loop
-export function startTeleport(hiddenPlayer) {
-  teleportInterval = setInterval(() => {
-    teleportHidden(hiddenPlayer);
-  }, 4000); // every 4 sec (feels better)
+export function startTeleport(hiddenPlayer, player) {
+  setInterval(() => {
+    teleportHidden(hiddenPlayer, player);
+  }, 2000);
 }
 
 // teleport hidden player
-function teleportHidden(hiddenPlayer) {
+function teleportHidden(hiddenPlayer, player) {
   const mapLimit = 5;
+  let newPos;
+  let distance;
 
-  hiddenPlayer.position.set(
-    Math.random() * mapLimit * 2 - mapLimit,
-    1,
-    Math.random() * mapLimit * 2 - mapLimit,
-  );
+  do {
+    newPos = {
+      x: Math.random() * mapLimit * 2 - mapLimit,
+      z: Math.random() * mapLimit * 2 - mapLimit,
+    };
+
+    distance = Math.sqrt(
+      Math.pow(newPos.x - player.position.x, 2) +
+        Math.pow(newPos.z - player.position.z, 2),
+    );
+  } while (distance < 4);
+
+  hiddenPlayer.position.set(newPos.x, 1, newPos.z);
 }
 
 // distance logic
@@ -44,7 +60,7 @@ export function checkDistance(player, hiddenPlayer) {
     hiddenPlayer.material.emissiveIntensity = 3;
   }
 
-  // VERY close = win
+  // very close = win
   else {
     winGame();
   }
@@ -52,7 +68,7 @@ export function checkDistance(player, hiddenPlayer) {
 
 // timer
 export function startTimer(timerText) {
-  const timerInterval = setInterval(() => {
+  timerInterval = setInterval(() => {
     if (gameOver) return;
 
     timeLeft--;
@@ -60,19 +76,41 @@ export function startTimer(timerText) {
 
     if (timeLeft <= 0) {
       loseGame();
-      clearInterval(timerInterval);
     }
   }, 1000);
 }
 
+// stop all running stuff
+function stopGame() {
+  gameOver = true;
+
+  if (teleportInterval) {
+    clearInterval(teleportInterval);
+    teleportInterval = null;
+  }
+
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+// show end screen
+function showEndScreen(text) {
+  document.getElementById("message").textContent = text;
+  document.getElementById("endScreen").style.display = "flex";
+}
+
 // win
 function winGame() {
-  gameOver = true;
-  document.getElementById("message").textContent = "You Can See Me Now";
+  if (gameOver) return;
+  stopGame();
+  showEndScreen("You Can See Me Now");
 }
 
 // lose
 function loseGame() {
-  gameOver = true;
-  document.getElementById("message").textContent = "You Never Found Me";
+  if (gameOver) return;
+  stopGame();
+  showEndScreen("You Never Found Me");
 }
