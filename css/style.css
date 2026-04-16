@@ -82,7 +82,7 @@ canvas {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: rgb(199, 88, 88);
   overflow: hidden;
   text-align: center;
 }
