@@ -54,7 +54,9 @@ export function checkDistance(player, hiddenPlayer) {
   if (gameOver) return;
   if (!player || !hiddenPlayer) return;
 
-  const distance = player.position.distanceTo(hiddenPlayer.position);
+  const dx = player.position.x - hiddenPlayer.position.x;
+  const dz = player.position.z - hiddenPlayer.position.z;
+  const distance = Math.sqrt(dx * dx + dz * dz);
 
   // far = still visible
   if (distance > 6) {
@@ -67,7 +69,7 @@ export function checkDistance(player, hiddenPlayer) {
   }
 
   // close = very visible + glowing
-  else if (distance > 1.5) {
+  else if (distance > 1.2) {
     setHiddenAppearance(hiddenPlayer, 0.9, 3);
   }
 
