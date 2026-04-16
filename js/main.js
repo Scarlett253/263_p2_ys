@@ -50,7 +50,7 @@ scene.add(fireLight);
 
 // visible player
 const player = new THREE.Mesh(
-  new THREE.SphereGeometry(0.5),
+  new THREE.SphereGeometry(0.4),
   new THREE.MeshStandardMaterial({ color: 0x00ffff }),
 );
 player.position.set(0, 1, 0);

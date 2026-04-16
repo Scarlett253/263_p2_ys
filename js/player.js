@@ -3,7 +3,7 @@ import * as THREE from "three";
 export let hiddenPlayer;
 
 export function createHiddenPlayer(scene) {
-  const geometry = new THREE.SphereGeometry(0.6);
+  const geometry = new THREE.SphereGeometry(0.4);
 
   const material = new THREE.MeshStandardMaterial({
     color: 0xffffff,
