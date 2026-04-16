@@ -1,61 +1,78 @@
-const mapLimit = 5;
-
-//timer setup
 let timeLeft = 60;
 let gameOver = false;
+let teleportInterval;
 
-//teleport hidden player
-export function teleportHidden(hiddenPlayer) {
-    hiddenPlayer.position.set(
-        Math.random() * mapLimit * 2 - mapLimit,
-        1,
-        Math.random() * mapLimit * 2 - mapLimit
-    );
-}
+// start teleport loop
 export function startTeleport(hiddenPlayer) {
-    setInterval(() => {
-        teleportHidden(hiddenPlayer);
-    }, 3000);
+  teleportInterval = setInterval(() => {
+    teleportHidden(hiddenPlayer);
+  }, 4000); // every 4 sec (feels better)
 }
 
-//Distance between players
+// teleport hidden player
+function teleportHidden(hiddenPlayer) {
+  const mapLimit = 5;
+
+  hiddenPlayer.position.set(
+    Math.random() * mapLimit * 2 - mapLimit,
+    1,
+    Math.random() * mapLimit * 2 - mapLimit,
+  );
+}
+
+// distance logic
 export function checkDistance(player, hiddenPlayer) {
-    const distance = player.position.distanceTo(hiddenPlayer.position);
+  if (gameOver) return;
 
-    if (distance < 1.5) {
-        hiddenPlayer.material.opacity = 1 - distance / 20;
-        hiddenPlayer.material.emissiveIntensity = 5
-    } else {
-        hiddenPlayer.material.opacity = 0.05;
-        hiddenPlayer.material.emissiveIntensity = 0;
-    }
-    if (distance < 2) {
-        winGame();
-    }
+  const distance = player.position.distanceTo(hiddenPlayer.position);
+
+  // far = almost invisible
+  if (distance > 6) {
+    hiddenPlayer.material.opacity = 0.03;
+    hiddenPlayer.material.emissiveIntensity = 0;
+  }
+
+  // medium = slightly visible
+  else if (distance > 3) {
+    hiddenPlayer.material.opacity = 0.1;
+    hiddenPlayer.material.emissiveIntensity = 1;
+  }
+
+  // close = glowing
+  else if (distance > 1.5) {
+    hiddenPlayer.material.opacity = 0.3;
+    hiddenPlayer.material.emissiveIntensity = 3;
+  }
+
+  // VERY close = win
+  else {
+    winGame();
+  }
 }
 
-//Timer
+// timer
 export function startTimer(timerText) {
-    const timerInterval = setInterval(() => {
-        if (gameOver) return;
+  const timerInterval = setInterval(() => {
+    if (gameOver) return;
 
-        timeLeft--;
-        timerText.textContent = "Time: " + timeLeft;
+    timeLeft--;
+    timerText.textContent = "Time: " + timeLeft;
 
-        if (timeLeft <= 0) {
-            loseGame();
-            clearInterval(timerInterval);
-        }
-    }, 1000);
+    if (timeLeft <= 0) {
+      loseGame();
+      clearInterval(timerInterval);
+    }
+  }, 1000);
 }
 
-//Win or Lose
+// win
 function winGame() {
-    gameOver = true;
-    document.getElementById("message").textContent = "You Can See Me Now";
+  gameOver = true;
+  document.getElementById("message").textContent = "You Can See Me Now";
 }
 
+// lose
 function loseGame() {
-    gameOver = true;
-    document.getElementById("message").textContent = "You Never Found Me";
+  gameOver = true;
+  document.getElementById("message").textContent = "You Never Found Me";
 }

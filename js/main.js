@@ -4,38 +4,13 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { createHiddenPlayer, hiddenPlayer } from "./player.js";
 import { startTimer, checkDistance, startTeleport } from "./game.js";
 
+// GAME STATE
+let gameStarted = false;
+
 // scene
 const scene = new THREE.Scene();
 
-// REMOVE the solid background color so the video can show through
-// scene.background = new THREE.Color(0x222222);
-
-createHiddenPlayer(scene);
-hiddenPlayer.material.emissiveIntensity = 0;
-
-startTeleport(hiddenPlayer);
-
-// timer
-const timerText = document.getElementById("timer");
-startTimer(timerText);
-
-// background video from HTML
-const bgVideo = document.getElementById("bgVideo");
-if (bgVideo) {
-  bgVideo.play().catch(function (error) {
-    console.log("video autoplay blocked:", error);
-  });
-}
-
-const mapLimit = 5;
-
-// fog
-const sceneFogColor = new THREE.Color(0x222222);
-scene.fog = new THREE.Fog(sceneFogColor, 2, 15);
-
-
 // camera
-const useFollowCamera = false; // turn on "true" to block the camera
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -47,56 +22,55 @@ camera.position.set(0, 3, 8);
 // renderer
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
-  alpha: true, // IMPORTANT so the HTML video can show behind
+  alpha: true,
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
-
-renderer.domElement.style.position = "fixed";
-renderer.domElement.style.top = "0";
-renderer.domElement.style.left = "0";
-renderer.domElement.style.zIndex = "1";
-
 document.body.appendChild(renderer.domElement);
 
-// mouse controls for testing the map
+// mouse camera controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.target.set(0, 0, 0);
+controls.enablePan = true;
+controls.enableZoom = true;
+controls.target.set(0, 1, 0);
+
+// fog
+scene.fog = new THREE.Fog(0x222222, 2, 15);
 
 // lights
-const pointLight = new THREE.PointLight(0xffffff, 3, 30);
-pointLight.position.set(0, 10, 0);
-scene.add(pointLight);
+const light = new THREE.PointLight(0xffffff, 3, 30);
+light.position.set(0, 10, 0);
+scene.add(light);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-scene.add(ambientLight);
+scene.add(new THREE.AmbientLight(0xffffff, 2));
 
-// player1
-const playerGeometry = new THREE.SphereGeometry(0.5);
-const playerMaterial = new THREE.MeshStandardMaterial({
-  color: 0x00ffff,
-  emissive: 0x00ffff,
-});
-
-const player = new THREE.Mesh(playerGeometry, playerMaterial);
+// visible player
+const player = new THREE.Mesh(
+  new THREE.SphereGeometry(0.5),
+  new THREE.MeshStandardMaterial({ color: 0x00ffff }),
+);
 player.position.set(0, 1, 0);
 scene.add(player);
 
-// keys
-const keys = {};
+// hidden player
+createHiddenPlayer(scene);
 
-document.addEventListener("keydown", function (e) {
+// keyboard controls
+const keys = {};
+document.addEventListener("keydown", (e) => {
   keys[e.key.toLowerCase()] = true;
 });
-
-document.addEventListener("keyup", function (e) {
+document.addEventListener("keyup", (e) => {
   keys[e.key.toLowerCase()] = false;
 });
 
-// player movement
+// movement
 function movePlayer() {
+  if (!gameStarted) return;
+
   const speed = 0.1;
+  const mapLimit = 5;
 
   if (keys["w"]) player.position.z -= speed;
   if (keys["s"]) player.position.z += speed;
@@ -104,6 +78,7 @@ function movePlayer() {
   if (keys["d"]) player.position.x += speed;
 
   player.position.y = 1;
+
   player.position.x = Math.max(
     -mapLimit,
     Math.min(mapLimit, player.position.x),
@@ -114,61 +89,53 @@ function movePlayer() {
   );
 }
 
-// load forest model
-const loader = new GLTFLoader();
+// START BUTTON
+const startBtn = document.getElementById("startBtn");
+const startScreen = document.getElementById("startScreen");
+const timerText = document.getElementById("timer");
 
+startBtn.addEventListener("click", () => {
+  startScreen.style.display = "none";
+  gameStarted = true;
+
+  startTimer(timerText);
+  startTeleport(hiddenPlayer);
+});
+
+// forest model
+const loader = new GLTFLoader();
 loader.load(
   "./models/forest.glb",
-  function (gltf) {
+  (gltf) => {
     const forest = gltf.scene;
-
     forest.scale.set(0.5, 0.5, 0.5);
     forest.position.set(0, 0, 0);
-
     scene.add(forest);
-
-    const box = new THREE.Box3().setFromObject(forest);
-    const center = box.getCenter(new THREE.Vector3());
-
-    controls.target.copy(center);
-    camera.lookAt(center);
-
-    console.log("model loaded");
   },
   undefined,
-  function (error) {
+  (error) => {
     console.log("error loading model:", error);
   },
 );
-
-function updateCamera() {
-  camera.position.x = player.position.x;
-  camera.position.y = player.position.y + 10;
-  camera.position.z = player.position.z + 20;
-
-  camera.lookAt(player.position);
-}
 
 // animation loop
 function animate() {
   requestAnimationFrame(animate);
 
-  controls.update();
   movePlayer();
+  controls.update();
 
-  if (useFollowCamera) {
-    updateCamera();
+  if (gameStarted) {
+    checkDistance(player, hiddenPlayer);
   }
-
-  checkDistance(player, hiddenPlayer);
 
   renderer.render(scene, camera);
 }
 
 animate();
 
-// keep canvas size correct if window changes
-window.addEventListener("resize", function () {
+// resize
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);

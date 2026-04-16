@@ -1,6 +1,8 @@
 body {
   margin: 0;
   overflow: hidden;
+  background: black;
+  font-family: Arial, sans-serif;
 }
 
 /* background video */
@@ -11,17 +13,63 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
-
-  z-index: -2;
+  z-index: 0;
 
   opacity: 0.25;
   filter: brightness(0.4) contrast(1.2) saturate(1.5) sepia(0.6)
     hue-rotate(-20deg) blur(2px);
 }
 
+/* THREE canvas */
 canvas {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   z-index: 1;
-  display: block;
+}
+
+/* UI (timer + message) */
+#ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  color: white;
+  padding: 16px;
+}
+
+/* START SCREEN */
+#startScreen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 3;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+#startScreen h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+#startBtn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* END MESSAGE */
+#message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  text-align: center;
 }
