@@ -40,21 +40,35 @@ controls.enablePan = true;
 controls.enableZoom = true;
 controls.target.set(0, 1, 0);
 
-// fog (simple, not too aggressive)
+// fog
 scene.fog = new THREE.Fog(0x120603, 10, 30);
 
-// 🔥 ONLY LIGHT (keep it simple)
-const fireLight = new THREE.PointLight(0xff5a1f, 6, 25);
+// light
+const fireLight = new THREE.PointLight(0xff5a1f, 10, 35);
 fireLight.position.set(0, 1, 0);
 scene.add(fireLight);
 
-// visible player
-const player = new THREE.Mesh(
-  new THREE.SphereGeometry(0.4),
-  new THREE.MeshStandardMaterial({ color: 0x00ffff }),
+// player model
+let player = null;
+
+// load player avatar
+const loader = new GLTFLoader();
+loader.load(
+  "./models/chubby_ghost.glb",
+  (gltf) => {
+    player = gltf.scene;
+
+    // WAY smaller
+    player.scale.set(0.06, 0.06, 0.06);
+    player.position.set(0, 0.3, 0);
+
+    scene.add(player);
+  },
+  undefined,
+  (error) => {
+    console.log("error loading player:", error);
+  },
 );
-player.position.set(0, 1, 0);
-scene.add(player);
 
 // hidden player
 createHiddenPlayer(scene);
@@ -72,16 +86,35 @@ document.addEventListener("keyup", (e) => {
 function movePlayer() {
   if (!gameStarted) return;
   if (isGameOver()) return;
+  if (!player) return;
 
   const speed = 0.1;
   const mapLimit = 5;
+  let isMoving = false;
 
-  if (keys["w"]) player.position.z -= speed;
-  if (keys["s"]) player.position.z += speed;
-  if (keys["a"]) player.position.x -= speed;
-  if (keys["d"]) player.position.x += speed;
+  if (keys["w"]) {
+    player.position.z -= speed;
+    player.rotation.y = Math.PI;
+    isMoving = true;
+  }
 
-  player.position.y = 1;
+  if (keys["s"]) {
+    player.position.z += speed;
+    player.rotation.y = 0;
+    isMoving = true;
+  }
+
+  if (keys["a"]) {
+    player.position.x -= speed;
+    player.rotation.y = -Math.PI / 2;
+  }
+
+  if (keys["d"]) {
+    player.position.x += speed;
+    player.rotation.y = Math.PI / 2;
+  }
+
+  player.position.y = 0.3;
 
   player.position.x = Math.max(
     -mapLimit,
@@ -105,7 +138,17 @@ startBtn.addEventListener("click", () => {
   gameStarted = true;
 
   startTimer(timerText);
-  startTeleport(hiddenPlayer, player);
+
+  if (player && hiddenPlayer) {
+    startTeleport(hiddenPlayer, player);
+  } else {
+    const waitForModels = setInterval(() => {
+      if (player && hiddenPlayer) {
+        startTeleport(hiddenPlayer, player);
+        clearInterval(waitForModels);
+      }
+    }, 100);
+  }
 });
 
 // restart
@@ -113,8 +156,7 @@ restartBtn.addEventListener("click", () => {
   location.reload();
 });
 
-// load model
-const loader = new GLTFLoader();
+// load forest model
 loader.load(
   "./models/forest.glb",
   (gltf) => {
@@ -138,7 +180,7 @@ function animate() {
   movePlayer();
   controls.update();
 
-  if (gameStarted && !isGameOver()) {
+  if (gameStarted && !isGameOver() && player && hiddenPlayer) {
     checkDistance(player, hiddenPlayer);
   }
 

@@ -10,7 +10,11 @@ export function isGameOver() {
 
 // start teleport loop
 export function startTeleport(hiddenPlayer, player) {
-  setInterval(() => {
+  if (teleportInterval) {
+    clearInterval(teleportInterval);
+  }
+
+  teleportInterval = setInterval(() => {
     teleportHidden(hiddenPlayer, player);
   }, 2000);
 }
@@ -33,31 +37,38 @@ function teleportHidden(hiddenPlayer, player) {
     );
   } while (distance < 4);
 
-  hiddenPlayer.position.set(newPos.x, 1, newPos.z);
+  hiddenPlayer.position.set(newPos.x, 2, newPos.z);
+}
+
+function setHiddenAppearance(hiddenPlayer, opacity, glow) {
+  hiddenPlayer.traverse((child) => {
+    if (child.isMesh) {
+      child.material.opacity = opacity;
+      child.material.emissiveIntensity = glow;
+    }
+  });
 }
 
 // distance logic
 export function checkDistance(player, hiddenPlayer) {
   if (gameOver) return;
+  if (!player || !hiddenPlayer) return;
 
   const distance = player.position.distanceTo(hiddenPlayer.position);
 
-  // far = almost invisible
+  // far = still visible
   if (distance > 6) {
-    hiddenPlayer.material.opacity = 0.03;
-    hiddenPlayer.material.emissiveIntensity = 0;
+    setHiddenAppearance(hiddenPlayer, 0.45, 0.8);
   }
 
-  // medium = slightly visible
+  // medium = more visible
   else if (distance > 3) {
-    hiddenPlayer.material.opacity = 0.1;
-    hiddenPlayer.material.emissiveIntensity = 1;
+    setHiddenAppearance(hiddenPlayer, 0.65, 1.5);
   }
 
-  // close = glowing
+  // close = very visible + glowing
   else if (distance > 1.5) {
-    hiddenPlayer.material.opacity = 0.3;
-    hiddenPlayer.material.emissiveIntensity = 3;
+    setHiddenAppearance(hiddenPlayer, 0.9, 3);
   }
 
   // very close = win
@@ -68,6 +79,10 @@ export function checkDistance(player, hiddenPlayer) {
 
 // timer
 export function startTimer(timerText) {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+
   timerInterval = setInterval(() => {
     if (gameOver) return;
 
