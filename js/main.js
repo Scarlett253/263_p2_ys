@@ -9,6 +9,18 @@ import {
   isGameOver,
 } from "./game.js";
 
+// UI
+const startBtn = document.getElementById("startBtn");
+const startScreen = document.getElementById("startScreen");
+const timerText = document.getElementById("timer");
+const restartBtn = document.getElementById("restartBtn");
+const message = document.getElementById("message");
+
+// end screen
+const endScreen = document.getElementById("endScreen");
+const winGif = document.getElementById("winGif");
+const loseGif = document.getElementById("loseGif");
+
 // game state
 let gameStarted = false;
 
@@ -49,7 +61,7 @@ controls.minDistance = 4;
 controls.maxDistance = 12;
 
 // fog
-scene.fog = new THREE.Fog(0x120603, 10, 30);
+scene.fog = new THREE.Fog(0x3a2a1f, 10, 30);
 
 // light
 const fireLight = new THREE.PointLight(0xff5a1f, 10, 35);
@@ -65,11 +77,8 @@ loader.load(
   "./models/chubby_ghost.glb",
   (gltf) => {
     player = gltf.scene;
-
-    // WAY smaller
     player.scale.set(0.06, 0.06, 0.06);
     player.position.set(0, 0.3, 0);
-
     scene.add(player);
   },
   undefined,
@@ -98,18 +107,15 @@ function movePlayer() {
 
   const speed = 0.1;
   const mapLimit = 5;
-  let isMoving = false;
 
   if (keys["w"]) {
     player.position.z -= speed;
     player.rotation.y = Math.PI;
-    isMoving = true;
   }
 
   if (keys["s"]) {
     player.position.z += speed;
     player.rotation.y = 0;
-    isMoving = true;
   }
 
   if (keys["a"]) {
@@ -133,12 +139,6 @@ function movePlayer() {
     Math.min(mapLimit, player.position.z),
   );
 }
-
-// UI
-const startBtn = document.getElementById("startBtn");
-const startScreen = document.getElementById("startScreen");
-const timerText = document.getElementById("timer");
-const restartBtn = document.getElementById("restartBtn");
 
 // start game
 startBtn.addEventListener("click", () => {
@@ -169,10 +169,8 @@ loader.load(
   "./models/forest.glb",
   (gltf) => {
     const forest = gltf.scene;
-
     forest.scale.set(0.5, 0.5, 0.5);
     forest.position.set(0, 0, 0);
-
     scene.add(forest);
   },
   undefined,
@@ -180,6 +178,31 @@ loader.load(
     console.log("error loading model:", error);
   },
 );
+
+// end game screens
+function showWinScreen() {
+  message.textContent = "You Can See Me Now";
+  endScreen.style.display = "flex";
+  requestAnimationFrame(() => {
+    endScreen.classList.add("show");
+  });
+  winGif.style.display = "block";
+  loseGif.style.display = "none";
+}
+
+function showLoseScreen() {
+  message.textContent = "You Never Found Me";
+  endScreen.style.display = "flex";
+  requestAnimationFrame(() => {
+    endScreen.classList.add("show");
+  });
+  loseGif.style.display = "block";
+  winGif.style.display = "none";
+}
+
+// let game.js access both
+window.showWinScreen = showWinScreen;
+window.showLoseScreen = showLoseScreen;
 
 // loop
 function animate() {

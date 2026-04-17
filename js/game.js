@@ -43,6 +43,7 @@ function teleportHidden(hiddenPlayer, player) {
 function setHiddenAppearance(hiddenPlayer, opacity, glow) {
   hiddenPlayer.traverse((child) => {
     if (child.isMesh) {
+      child.material.transparent = true;
       child.material.opacity = opacity;
       child.material.emissiveIntensity = glow;
     }
@@ -77,6 +78,8 @@ export function checkDistance(player, hiddenPlayer) {
   else {
     winGame();
   }
+
+  return distance;
 }
 
 // timer
@@ -84,6 +87,10 @@ export function startTimer(timerText) {
   if (timerInterval) {
     clearInterval(timerInterval);
   }
+
+  timeLeft = 60;
+  gameOver = false;
+  timerText.textContent = "Time: " + timeLeft;
 
   timerInterval = setInterval(() => {
     if (gameOver) return;
@@ -112,22 +119,22 @@ function stopGame() {
   }
 }
 
-// show end screen
-function showEndScreen(text) {
-  document.getElementById("message").textContent = text;
-  document.getElementById("endScreen").style.display = "flex";
-}
-
 // win
 function winGame() {
   if (gameOver) return;
   stopGame();
-  showEndScreen("You Can See Me Now");
+
+  if (window.showWinScreen) {
+    window.showWinScreen();
+  }
 }
 
 // lose
 function loseGame() {
   if (gameOver) return;
   stopGame();
-  showEndScreen("You Never Found Me");
+
+  if (window.showLoseScreen) {
+    window.showLoseScreen();
+  }
 }

@@ -51,8 +51,8 @@ body {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  opacity: 0.25;
-  filter: brightness(0.4) contrast(1.2) saturate(1.5) sepia(0.6)
+  opacity: 0.5;
+  filter: brightness(0.7) contrast(1.1) saturate(1.3) sepia(0.6)
     hue-rotate(-20deg) blur(2px);
 }
 
@@ -65,7 +65,7 @@ canvas {
   display: block;
 }
 
-/* top left timer */
+/* timer */
 #ui {
   position: fixed;
   top: 0;
@@ -99,9 +99,9 @@ canvas {
   text-align: center;
 }
 
-/* start screen gif */
 #startGif {
   position: absolute;
+  pointer-events: none;
   inset: 0;
   width: 100%;
   height: 100%;
@@ -111,7 +111,6 @@ canvas {
     hue-rotate(-20deg) blur(2px);
 }
 
-/* dark layer on top of start gif */
 #startScreen::after {
   content: "";
   position: absolute;
@@ -120,7 +119,6 @@ canvas {
   z-index: 1;
 }
 
-/* start screen content above gif */
 #startScreen h1,
 #startScreen p,
 #startScreen button {
@@ -128,7 +126,6 @@ canvas {
   z-index: 2;
 }
 
-/* title */
 #game-title {
   font-size: 78px;
   letter-spacing: 7px;
@@ -142,11 +139,9 @@ canvas {
     0 0 22px rgba(255, 150, 80, 0.45);
 }
 
-/* instructions */
-#instructions,
-#sub-instructions,
-#message {
-  font-size: 30px;
+#instructions {
+  margin: 0 0 14px 0;
+  font-size: 20px;
   color: rgb(249, 249, 255);
   letter-spacing: 3px;
   line-height: 1.5;
@@ -155,18 +150,18 @@ canvas {
     0 0 12px rgba(255, 150, 80, 0.35);
 }
 
-#instructions {
-  margin: 0 0 14px 0;
-  font-size: 20px;
-}
-
 #sub-instructions {
   margin: 0 0 26px 0;
   font-size: 18px;
   max-width: 700px;
+  color: rgb(249, 249, 255);
+  letter-spacing: 3px;
+  line-height: 1.5;
+  text-shadow:
+    0 0 4px rgba(243, 106, 106, 0.6),
+    0 0 12px rgba(255, 150, 80, 0.35);
 }
 
-/* start button as gif */
 #startBtn {
   position: relative;
   z-index: 2;
@@ -191,7 +186,18 @@ canvas {
   transform: scale(1.05);
 }
 
-/*credits */
+#startLabel {
+  margin-top: 10px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: white;
+  text-shadow:
+    0 0 3px rgba(255, 255, 255, 0.5),
+    0 0 8px rgba(255, 150, 80, 0.25);
+  position: relative;
+  z-index: 2;
+}
+
 #credits {
   position: absolute;
   bottom: 16px;
@@ -203,44 +209,90 @@ canvas {
     0 0 8px rgba(255, 150, 80, 0.25);
 }
 
-/* restart button */
-#restartBtn {
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 18px;
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  font-family: "MyCustomFont", Arial, sans-serif;
-  letter-spacing: 2px;
-  box-shadow:
-    0 0 8px rgba(255, 255, 255, 0.3),
-    0 0 18px rgba(255, 150, 80, 0.2);
-}
-
+/* END SCREEN */
 /* END SCREEN */
 #endScreen {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
   z-index: 4;
   display: none;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+#endScreen.show {
+  display: flex;
+  opacity: 1;
 }
 
 #endBox {
-  background: rgba(20, 20, 20, 0.9);
-  padding: 30px 40px;
-  border-radius: 10px;
-  text-align: center;
-  color: white;
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.15),
-    0 0 30px rgba(255, 150, 80, 0.15);
+  width: 100%;
+  max-width: 800px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 #message {
-  font-size: 30px;
-  margin: 0 0 20px 0;
+  width: 100%;
+  text-align: center;
+  margin: 0 0 28px 0;
+  font-size: 32px;
+  letter-spacing: 3px;
+  line-height: 1.3;
+  color: white;
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.65),
+    0 0 16px rgba(255, 150, 80, 0.35);
+}
+
+/* end gifs */
+#winGif,
+#loseGif {
+  display: none;
+  width: 100%;
+  max-width: 540px;
+  max-height: 300px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
+  margin-bottom: 26px;
+  box-shadow: none;
+  background: transparent;
+}
+
+#restartBtn {
+  margin-top: 10px;
+  padding: 14px 30px;
+  font-size: 18px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 190, 140, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-family: "MyCustomFont", Arial, sans-serif;
+  letter-spacing: 2px;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.12),
+    0 0 20px rgba(255, 150, 80, 0.12);
+}
+
+#restartBtn:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.14);
 }
