@@ -22,15 +22,22 @@ const endScreen = document.getElementById("endScreen");
 const winGif = document.getElementById("winGif");
 const loseGif = document.getElementById("loseGif");
 
-// 🎵 START MUSIC ON START SCREEN
-window.addEventListener("load", () => {
-  if (bgMusic) {
-    bgMusic.volume = 0.2;
-    bgMusic.play().catch((error) => {
-      console.log("autoplay blocked:", error);
-    });
-  }
-});
+// music
+if (bgMusic) {
+  bgMusic.volume = 0.2;
+}
+
+startScreen.addEventListener(
+  "click",
+  () => {
+    if (bgMusic && bgMusic.paused) {
+      bgMusic.play().catch((error) => {
+        console.log("music blocked:", error);
+      });
+    }
+  },
+  { once: true },
+);
 
 // game state
 let gameStarted = false;
