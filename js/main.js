@@ -151,7 +151,7 @@ function movePlayer() {
   );
 }
 
-// start game (NO MUSIC HERE)
+// start game
 startBtn.addEventListener("click", () => {
   startScreen.style.display = "none";
   gameStarted = true;

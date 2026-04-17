@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 export let hiddenPlayer;
 
+// handles game logic and hidden player behavior
 export function createHiddenPlayer(scene) {
   const loader = new GLTFLoader();
 
@@ -10,8 +11,6 @@ export function createHiddenPlayer(scene) {
     "./models/ghost_of_tsushiito.glb",
     (gltf) => {
       hiddenPlayer = gltf.scene;
-
-      // make it visible enough first so we know it loaded
       hiddenPlayer.scale.set(0.6, 0.6, 0.6);
       hiddenPlayer.position.set(5, 2, 5);
 

@@ -64,7 +64,7 @@ export function checkDistance(player, hiddenPlayer) {
     setHiddenAppearance(hiddenPlayer, 0.45, 0.8);
   }
 
-  // medium = more visible
+  // visible =  slight glow
   else if (distance > 3) {
     setHiddenAppearance(hiddenPlayer, 0.65, 1.5);
   }
@@ -104,7 +104,7 @@ export function startTimer(timerText) {
   }, 1000);
 }
 
-// stop all running stuff
+// stop all running stuff when game ends
 function stopGame() {
   gameOver = true;
 
