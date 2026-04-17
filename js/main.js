@@ -40,6 +40,14 @@ controls.enablePan = true;
 controls.enableZoom = true;
 controls.target.set(0, 1, 0);
 
+// stop camera from going under the map
+controls.minPolarAngle = 0.3;
+controls.maxPolarAngle = Math.PI / 2.2;
+
+// limit zoom
+controls.minDistance = 4;
+controls.maxDistance = 12;
+
 // fog
 scene.fog = new THREE.Fog(0x120603, 10, 30);
 
