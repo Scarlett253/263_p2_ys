@@ -15,11 +15,22 @@ const startScreen = document.getElementById("startScreen");
 const timerText = document.getElementById("timer");
 const restartBtn = document.getElementById("restartBtn");
 const message = document.getElementById("message");
+const bgMusic = document.getElementById("bgMusic");
 
 // end screen
 const endScreen = document.getElementById("endScreen");
 const winGif = document.getElementById("winGif");
 const loseGif = document.getElementById("loseGif");
+
+// 🎵 START MUSIC ON START SCREEN
+window.addEventListener("load", () => {
+  if (bgMusic) {
+    bgMusic.volume = 0.2;
+    bgMusic.play().catch((error) => {
+      console.log("autoplay blocked:", error);
+    });
+  }
+});
 
 // game state
 let gameStarted = false;
@@ -140,7 +151,7 @@ function movePlayer() {
   );
 }
 
-// start game
+// start game (NO MUSIC HERE)
 startBtn.addEventListener("click", () => {
   startScreen.style.display = "none";
   gameStarted = true;
